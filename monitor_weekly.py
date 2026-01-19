@@ -209,14 +209,14 @@ def build_metadata_context(entries, cap=50):
         )
     return "\n".join(lines)
 
-def generate_trend_summary(entries_30d, language="ko"):
+def generate_trend_summary(entries_30d, language="en"):
     client = gemini_client()
     if client is None or not entries_30d:
         return ""
 
     context = build_metadata_context(entries_30d, cap=60)
 
-    if language.lower().startswith("ko"):
+    if language.lower().startswith("en"):
         prompt = f"""
 너는 적층제조(AM) 및 초내열합금(superalloys) 분야의 연구 동향 분석가다.
 아래 메타데이터(제목/키워드/저자/소속/저널)만 근거로, 지난 30일 신규 유입 논문에 대한 '한 문단(5~7문장)' 동향 요약을 작성해라.
@@ -247,7 +247,7 @@ Metadata:
         print("⚠️ Gemini trend summary failed:", str(ex)[:300])
         return ""
 
-def generate_research_directions(entries_30d, lab_context, language="ko"):
+def generate_research_directions(entries_30d, lab_context, language="en"):
     client = gemini_client()
     if client is None or not entries_30d:
         return ""
@@ -257,7 +257,7 @@ def generate_research_directions(entries_30d, lab_context, language="ko"):
     # If lab_context is missing, still produce general directions but label it
     lab_block = lab_context if lab_context else "(Lab context not provided. Provide feasible directions with common AM/superalloy lab capabilities.)"
 
-    if language.lower().startswith("ko"):
+    if language.lower().startswith("en"):
         prompt = f"""
 너는 소재/제조 분야(특히 AM 및 초내열합금) 시니어 연구기획자다.
 아래 '지난 30일 신규 유입 논문 메타데이터'를 검토하고, '우리 연구실 환경'에 맞는 새로운 연구 방향 5개를 제시해라.
@@ -444,7 +444,7 @@ def main():
     print("GEMINI_API_KEY present:", bool(GEMINI_API_KEY))
     print("GEMINI_MODEL:", GEMINI_MODEL)
 
-    trend_summary = generate_trend_summary(entries_30d, language="ko")
+    trend_summary = generate_trend_summary(entries_30d, language="en")
     directions_text = generate_research_directions(entries_30d, LAB_CONTEXT, language="ko")
 
     print("trend_summary length:", len(trend_summary))
